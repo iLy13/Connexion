@@ -1,6 +1,7 @@
 from telegram.ext import Updater, MessageHandler, Filters
 from telegram.ext import CommandHandler
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove
+from functions import start, help
 import os
 archiv = ''
 files = [['/help']]
@@ -17,13 +18,6 @@ def show(update, context):
             update.message.reply_text(data)
     elif format in ['jpg', 'jpeg', 'png']:
         context.bot.send_photo(chat_id=chat_id, photo=open(f'{archiv}/{" ".join(context.args)}', 'rb'))
-
-
-def start(update, context):
-    begin = [['/help']]
-    beginning = ReplyKeyboardMarkup(begin, one_time_keyboard=True)
-    update.message.reply_text('Welcome to the "Connexion" service! '
-                              'Find out about available commands by writing "/help"', reply_markup=beginning)
 
 
 def connect(update, context):
@@ -45,12 +39,6 @@ def disconnect(update, context):
     files = [['/help']]
     markup = ReplyKeyboardMarkup(files, one_time_keyboard=False)
     update.message.reply_text("Directory is disconnected. Check our service's commands", reply_markup=markup)
-
-
-def help(update, context):
-    update.message.reply_text('/start - starts working with service\n/help - shows available commands\n'
-                              '/connect {your directory} - choosing directory to work with\n'
-                              '/disconnect - disconnection with directory\n/show {your file} - shows you chosen file')
 
 
 def main():
