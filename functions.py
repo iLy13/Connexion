@@ -1,7 +1,4 @@
-from telegram.ext import Updater, MessageHandler, Filters
-from telegram.ext import CommandHandler
-from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove
-import os
+from telegram import ReplyKeyboardMarkup
 
 
 def start(update, context):
@@ -17,3 +14,15 @@ def help(update, context):
                               '/disconnect - disconnection with directory\n/show {your file} - shows you chosen file')
 
 
+def create_kb(spisok):
+    kb = []
+    while len(spisok) > 0:
+        if len(spisok) > 15:
+            keys = [[f'/show {k}' for k in spisok[:8]], [f'/show {n}' for n in spisok[8:15]].append('/next_page')]
+            kb.append(keys)
+            del spisok[:15]
+        else:
+            kb.append([[f'/show {k}' for k in spisok[:(len(spisok) // 2)]],
+                      [f'/show {m}' for m in spisok[(len(spisok) // 2):]]])
+            spisok.clear()
+    return kb

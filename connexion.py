@@ -1,12 +1,13 @@
 from telegram.ext import Updater, MessageHandler, Filters
 from telegram.ext import CommandHandler
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove
-from functions import start, help
+from functions import start, help, create_kb
 import os
 archiv = ''
 files = [['/help']]
 markup = ReplyKeyboardMarkup(files, one_time_keyboard=False)
 chat_id = '1303744874'
+n_pages = 0
 
 
 def show(update, context):
@@ -21,11 +22,13 @@ def show(update, context):
 
 
 def connect(update, context):
-    global archiv, files, markup
+    global archiv, files, markup, n_pages
     try:
+        n_pages = 0
         archiv = context.args[0]
-        files = [[f'/show {k}' for k in os.listdir(context.args[0])]]
-        markup = ReplyKeyboardMarkup(files, one_time_keyboard=False)
+        files = create_kb(os.listdir(archiv))
+        print(files)
+        markup = ReplyKeyboardMarkup(files[n_pages], one_time_keyboard=False)
         update.message.reply_text('We are ready to work! Choose file', reply_markup=markup)
     except IndexError:
         update.message.reply_text('You need to write name of the directory')
@@ -34,9 +37,10 @@ def connect(update, context):
 
 
 def disconnect(update, context):
-    global archiv, files, markup
+    global archiv, files, markup, n_pages
     archiv = ''
     files = [['/help']]
+    n_pages = 0
     markup = ReplyKeyboardMarkup(files, one_time_keyboard=False)
     update.message.reply_text("Directory is disconnected. Check our service's commands", reply_markup=markup)
 
