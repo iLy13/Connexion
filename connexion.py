@@ -27,8 +27,7 @@ def connect(update, context):
         n_pages = 0
         archiv = context.args[0]
         files = create_kb(os.listdir(archiv))
-        print(files)
-        markup = ReplyKeyboardMarkup(files[n_pages], one_time_keyboard=False)
+        markup = ReplyKeyboardMarkup(files[0], one_time_keyboard=False)
         update.message.reply_text('We are ready to work! Choose file', reply_markup=markup)
     except IndexError:
         update.message.reply_text('You need to write name of the directory')
@@ -45,10 +44,20 @@ def disconnect(update, context):
     update.message.reply_text("Directory is disconnected. Check our service's commands", reply_markup=markup)
 
 
+def next_page(update, context):
+    global archiv, files, markup, n_pages
+    n_pages += 1
+    if n_pages == len(files):
+        n_pages = 0
+    markup = ReplyKeyboardMarkup(files[n_pages], one_time_keyboard=False)
+    update.message.reply_text('Next page! Choose file', reply_markup=markup)
+
+
 def main():
     updater = Updater('5170844453:AAFtKrDwRUmbQHYP-JHHi2OzQN_BfP2hMzc', use_context=True)
     dp = updater.dispatcher
     dp.add_handler(CommandHandler('start', start))
+    dp.add_handler(CommandHandler('next_page', next_page))
     dp.add_handler(CommandHandler('show', show))
     dp.add_handler(CommandHandler('help', help))
     dp.add_handler(CommandHandler('connect', connect))
