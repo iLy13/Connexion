@@ -2,6 +2,7 @@ from telegram.ext import Updater, MessageHandler, Filters
 from telegram.ext import CommandHandler
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove
 from functions import start, help, create_kb
+from docx import Document
 import os
 archiv = ''
 files = [['/help']]
@@ -19,6 +20,12 @@ def show(update, context):
             update.message.reply_text(data)
     elif format in ['jpg', 'jpeg', 'png']:
         context.bot.send_photo(chat_id=chat_id, photo=open(f'{archiv}/{" ".join(context.args)}', 'rb'))
+    elif format == 'docx':
+        document = Document(f'{archiv}/{" ".join(context.args)}')
+        for par in document.paragraphs:
+            update.message.reply_text(par.text)
+        for table in document.tables:
+            update.message.reply_text(table.rows[0].cells[0].text)
 
 
 def connect(update, context):
