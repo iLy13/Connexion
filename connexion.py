@@ -1,7 +1,8 @@
 from telegram.ext import Updater, MessageHandler, Filters
 from telegram.ext import CommandHandler
-from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove
+from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, message, bot
 from functions import start, help, create_kb
+from io import BytesIO
 from docx import Document
 import os
 archiv = ''
@@ -11,7 +12,7 @@ chat_id = '1303744874'
 n_pages = 0
 
 
-def show(update, context):
+def get(update, context):
     global archiv, chat_id
     format = ' '.join(context.args).lower().split('.')[-1]
     if format == 'txt':
@@ -26,6 +27,8 @@ def show(update, context):
             update.message.reply_text(par.text)
         for table in document.tables:
             update.message.reply_text(table.rows[0].cells[0].text)
+    else:
+        context.bot.send_document(chat_id=chat_id, document=open(f'{archiv}/{" ".join(context.args)}', 'rb'))
 
 
 def connect(update, context):
@@ -60,12 +63,17 @@ def next_page(update, context):
     update.message.reply_text('Next page! Choose file', reply_markup=markup)
 
 
+def send(update, context):
+    pass
+
+
 def main():
     updater = Updater('5170844453:AAFtKrDwRUmbQHYP-JHHi2OzQN_BfP2hMzc', use_context=True)
     dp = updater.dispatcher
     dp.add_handler(CommandHandler('start', start))
     dp.add_handler(CommandHandler('next_page', next_page))
-    dp.add_handler(CommandHandler('show', show))
+    dp.add_handler(CommandHandler('get', get))
+    dp.add_handler(CommandHandler('send', send))
     dp.add_handler(CommandHandler('help', help))
     dp.add_handler(CommandHandler('connect', connect))
     dp.add_handler(CommandHandler('disconnect', disconnect))
