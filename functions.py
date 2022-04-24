@@ -13,7 +13,9 @@ def help(update, context):
                               '/connect {your directory} - choosing directory to work with\n'
                               '/disconnect - disconnection with directory\n'
                               '/get {your file} - shows you chosen file\n'
-                              '/next_page - changing page of your directory')
+                              '/next_page - changing page of your directory\n'
+                              '/new_text - starts recording of a new file\n'
+                              '/stop - stops recording of a new file')
 
 
 def create_kb(spisok):
