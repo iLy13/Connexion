@@ -1,4 +1,5 @@
 from telegram import ReplyKeyboardMarkup
+import sqlite3
 
 
 def start(update, context):
@@ -35,3 +36,12 @@ def create_kb(spisok):
             kb.append(keys)
             spisok.clear()
     return kb
+
+
+def write_history(event, file, date, month, year, time):
+    con = sqlite3.connect('Database.db')
+    cur = con.cursor()
+    cur.execute("""INSERT INTO History(Event, File, Date, Month, Year, Time) 
+                VALUES (?, ?, ?, ?, ?, ?)""", (event, file, date, month, year, time,))
+    con.commit()
+    con.close()

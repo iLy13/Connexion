@@ -3,6 +3,7 @@ from telegram.ext import CommandHandler
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, message, bot
 from functions import start, help, create_kb
 from io import BytesIO
+import datetime
 from docx import Document
 import os
 archiv = ''
