@@ -1,7 +1,7 @@
 from telegram.ext import Updater, MessageHandler, Filters, ConversationHandler
 from telegram.ext import CommandHandler
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, message, bot
-from functions import start, help, create_kb
+from functions import start, help, create_kb, write_history
 from io import BytesIO
 import datetime
 from docx import Document
@@ -30,6 +30,9 @@ def get(update, context):
             update.message.reply_text(table.rows[0].cells[0].text)
     else:
         context.bot.send_document(chat_id=chat_id, document=open(f'{archiv}/{" ".join(context.args)}', 'rb'))
+    date = datetime.datetime.today()
+    write_history('get', f'{archiv}/{" ".join(context.args)}', date.strftime('%D').split('/')[1],
+                  date.strftime('%B'), date.strftime('%Y'), date.strftime('%T'))
 
 
 def connect(update, context):
@@ -71,7 +74,6 @@ def new_text(update, context):
 
 def first_response(update, context):
     data = update.message.text
-    print(1)
     context.user_data['file'] = data
     if data.split('.')[-1] == 'txt':
         update.message.reply_text('Print your text')
@@ -88,9 +90,11 @@ def second_response(update, context):
     global archiv
     try:
         data = update.message.text
-        print(2)
         with open(f'{archiv}/{context.user_data["file"]}', 'w', encoding='utf-8') as f:
             f.write(data)
+        date = datetime.datetime.today()
+        write_history('new_text', f'{archiv}/{context.user_data["file"]}', date.strftime('%D').split('/')[1],
+                      date.strftime('%B'), date.strftime('%Y'), date.strftime('%T'))
         context.user_data.clear()
         update.message.reply_text("You file is successfully saved!")
         return ConversationHandler.END
@@ -103,7 +107,6 @@ def third_response(update, context):
     global archiv
     try:
         data = update.message.text
-        print(2)
         document = Document()
         document.add_heading((context.user_data["file"][:-5]).capitalize(), 0)
         document.add_paragraph(data)
